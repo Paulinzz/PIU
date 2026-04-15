@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Pessoa</title>
+</head>
+<body>
+    <h1>Cadastro de Pessoa</h1>
+    <p>Abra o console do navegador (F12) para ver os resultados.</p>
+
+    <script>
+        let pessoa = {};
+        
+        function validarNome(nome) {
+            if (typeof nome !== "string") {
+                throw new Error("O nome deve ser uma string");
+            }
+            if (nome.trim() === "") {
+                throw new Error("O nome não pode ser vazio");
+            }
+            return true;
+        }
+
+        function validarIdade(idade) {
+            if (!Number.isInteger(idade)) {
+                throw new Error("A idade deve ser um número inteiro");
+            }
+            if (idade < 0) {
+                throw new Error("A idade não pode ser negativa");
+            }
+            return true;
+        }
+
+        function validarFoiADisney(foiADisney) {
+            if (typeof foiADisney !== "boolean") {
+                throw new Error("O campo 'foi à Disney' deve ser um booleano (true ou false)");
+            }
+            return true;
+        }
+
+        while (true) {
+            try {
+                let nome = prompt("Digite o nome:");
+                validarNome(nome);
+                pessoa.nome = nome;
+                break;
+            } catch (erro) {
+                alert("Erro: " + erro.message);
+            }
+        }
+
+        while (true) {
+            try {
+                let idade = prompt("Digite a idade:");
+                idade = Number(idade);
+                validarIdade(idade);
+                pessoa.idade = idade;
+                break;
+            } catch (erro) {
+                alert("Erro: " + erro.message);
+            }
+        }
+
+        while (true) {
+            try {
+                let resposta = prompt("Já foi à Disney? (digite 'true' ou 'false'):");
+                let foiADisney = resposta.toLowerCase() === 'true';
+                if (resposta.toLowerCase() !== 'true' && resposta.toLowerCase() !== 'false') {
+                    throw new Error("Digite 'true' ou 'false'");
+                }
+                validarFoiADisney(foiADisney);
+                pessoa.foiADisney = foiADisney;
+                break;
+            } catch (erro) {
+                alert("Erro: " + erro.message);
+            }
+        }
+
+        console.log("Pessoa cadastrada:", pessoa);
+        console.log(`Meu nome é ${pessoa.nome}, de idade ${pessoa.idade}, eu ja fui a disney? ${pessoa.foiADisney}`);
+        alert(`Meu nome é ${pessoa.nome}, de idade ${pessoa.idade}, eu ja fui a disney? ${pessoa.foiADisney}`);
+    </script>
+</body>
+</html>
