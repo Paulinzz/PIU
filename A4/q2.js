@@ -1,5 +1,5 @@
 function parOuImpar(n) {
-    n.forEach(function(num) {
+    n.forEach((num) => {
         if (num % 2 === 0) {
             console.log(num + " é par");
         } else {
