@@ -9,3 +9,4 @@ function parOuImpar(n) {
 }
 
 parOuImpar([1, 2, 5, 6, 0]);
+    

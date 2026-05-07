@@ -1,0 +1,25 @@
+Q1 – Por que é possível alterar propriedades de um objeto declarado com const?
+
+Resposta:
+-------
+
+Em JavaScript, o "const" não significa que o VALOR da variável é imutável,
+e sim que a REFERÊNCIA (o "endereço de memória") não pode ser reatribuída.
+
+O "const" garante que a variável vai SEMPRE apontar para o mesmo objeto —
+você não pode fazer ela apontar para outro objeto. Mas o CONTEÚDO interno
+do objeto você pode mudar à vontade.
+
+O que o "const" IMPEDE:
+  pessoa = { nome: 'Outro', idade: 10 }  // ERRO! Não pode reatribuir.
+
+O que o "const" PERMITE (alterar propriedades internas):
+  pessoa.nome = 'Anderson'
+  pessoa.idade = 35
+
+Ou seja: o objeto em si é mutável. O "const" só trava o "apontador",
+não o objeto para o qual ele aponta.
+
+Se você quer um objeto verdadeiramente imutável em JavaScript,
+precisa usar Object.freeze(pessoa) — aí sim nenhuma propriedade
+poderá ser alterada.
