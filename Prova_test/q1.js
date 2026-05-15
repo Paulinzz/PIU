@@ -1,65 +1,100 @@
-// Define uma função chamada resumirFuncionarios que recebe um array de objetos funcionários
-function resumirFuncionarios(funcionarios) {
+// ========== Q1: Vacinas atrasadas (sem loops, sem if) ==========
+const vacinas = [
+    { nome: 'V8', dia: 15, mes: 5, ano: 2026 },
+    { nome: 'Antirrábica', dia: 10, mes: 4, ano: 2025 },
+    { nome: 'Leishmaniose', dia: 20, mes: 6, ano: 2027 },
+    { nome: 'Giárdia', dia: 15, mes: 4, ano: 2026 },
+    { nome: 'Gripe Canina', dia: 5, mes: 5, ano: 2026 },
+    { nome: 'Sei lá o que mais', dia: 15, mes: 6, ano: 2023 },
+];
 
-    // Cria um objeto inicial com valores padrão para o cálculo do resumo
-    const resumoInicial = {
-        menorIdade: Infinity,       // Inicia com infinito para garantir que qualquer idade será menor
-        maiorIdade: -Infinity,      // Inicia com -infinito para garantir que qualquer idade será maior
-        totalMulheres: 0,           // Contador de mulheres começa em 0
-        totalHomens: 0,             // Contador de homens começa em 0
-        somaSalarios: 0,            // Acumulador de salários começa em 0
-    }
+const hoje = new Date();
+const hojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
 
-    // Usa reduce para iterar sobre o array de funcionários e acumular os dados no objeto resumoInicial
-    const resumo = funcionarios.reduce((acumulador, funcionario) => {
+const vacinasAtrasadas = vacinas
+  .map(v => ({ ...v, atrasada: +(v.ano * 10000 + v.mes * 100 + v.dia < hoje.getFullYear() * 10000 + (hoje.getMonth() + 1) * 100 + hoje.getDate() ? 1 : 0) }))
+  .filter(v => v.atrasada === 1)
+  .map(({ atrasada, ...rest }) => rest);
 
-        // Atualiza a menor idade comparando o valor atual com a idade do funcionário atual
-        acumulador.menorIdade = Math.min(
-            acumulador.menorIdade,
-            funcionario.idade
-        )
+console.log('Q1 - Vacinas Atrasadas:');
+console.log(vacinasAtrasadas);
 
-        // Atualiza a maior idade comparando o valor atual com a idade do funcionário atual
-        acumulador.maiorIdade = Math.max(
-            acumulador.maiorIdade,
-            funcionario.idade
-        )
 
-        // Se o gênero for 'F' (feminino), incrementa o contador de mulheres
-        if (funcionario.genero === 'F') {
-            acumulador.totalMulheres++
-        }
+// ========== Q2: Biblioteca de Livros ==========
 
-        // Se o gênero for 'M' (masculino), incrementa o contador de homens
-        if (funcionario.genero === 'M') {
-            acumulador.totalHomens++
-        }
-
-        // Acumula o salário do funcionário atual na soma total
-        acumulador.somaSalarios += funcionario.salario
-
-        // Retorna o acumulador para a próxima iteração do reduce
-        return acumulador
-    }, resumoInicial)  // resumoInicial é o valor inicial do acumulador
-
-    // Retorna o objeto final com o resumo calculado
-    return {
-        menorIdade: resumo.menorIdade,           // Menor idade encontrada
-        maiorIdade: resumo.maiorIdade,           // Maior idade encontrada
-        totalMulheres: resumo.totalMulheres,     // Total de mulheres
-        totalHomens: resumo.totalHomens,         // Total de homens
-        mediaSalarial:
-            resumo.somaSalarios / funcionarios.length,  // Média salarial = total / número de funcionários
-    }
+class Livro {
+  constructor(isbn, titulo, ano, status = 'disponível') {
+    this.isbn = isbn;
+    this.titulo = titulo;
+    this.ano = ano;
+    this.status = status;
+  }
 }
 
-// Define um array de objetos funcionários com nome, idade, gênero e salário
-const funcionarios = [
-    { nome: 'Alice', idade: 40, genero: 'F', salario: 6000 },
-    { nome: 'Bruna', idade: 28, genero: 'F', salario: 3200 },
-    { nome: 'Carlos', idade: 51, genero: 'M', salario: 7000 },
-]
+class Biblioteca {
+  constructor() {
+    Object.defineProperty(this, 'livros', {
+      value: [],
+      writable: false,
+      enumerable: true,
+      configurable: false
+    });
+  }
 
-// Chama a função e imprime o resultado no console
-// Saída esperada: { menorIdade: 28, maiorIdade: 51, totalMulheres: 2, totalHomens: 1, mediaSalarial: 5400 }
-console.log(resumirFuncionarios(funcionarios))
+  cadastrar(livro) {
+    this.livros.forEach(l => { if (l.isbn === livro.isbn) { throw new Error(`Livro ${livro.isbn} já está cadastrado`); } });
+    Object.getOwnPropertyDescriptor(this, 'livros').value.push(livro);
+  }
+
+  emprestar(isbn) {
+    const livro = this.livros.find(l => l.isbn === isbn);
+    if (!livro) { throw new Error(`Livro ${isbn} não está cadastrado`); }
+    if (livro.status !== 'disponível') { throw new Error(`Livro ${isbn} está ${livro.status}`); }
+    livro.status = 'emprestado';
+  }
+
+  devolver(isbn) {
+    const livro = this.livros.find(l => l.isbn === isbn);
+    if (!livro) { throw new Error(`Livro ${isbn} não está cadastrado`); }
+    if (livro.status !== 'emprestado') { throw new Error(`Livro ${isbn} está ${livro.status}`); }
+    livro.status = 'disponível';
+  }
+}
+
+const biblioteca = new Biblioteca();
+
+// Cadastro de livros
+const cadastros = [
+  () => biblioteca.cadastrar(new Livro('123', 'Libertação Animal', 1975, 'disponível')),
+  () => biblioteca.cadastrar(new Livro('234', 'Coisa de Rico', 2024, 'disponível')),
+  () => biblioteca.cadastrar(new Livro('345', 'O Hobbit', 1934, 'disponível')),
+  () => biblioteca.cadastrar(new Livro('345', 'O Alquimista', 1988, 'desaparecido')),
+  () => biblioteca.cadastrar(new Livro('456', 'O Alquimista', 1988, 'desaparecido')),
+  () => biblioteca.cadastrar(new Livro(567, 'Quarto de Despejo', 1964, 'disponível')),
+];
+
+console.log('\nQ2 - Cadastro de livros:');
+cadastros.forEach(fn => {
+  try { fn(); }
+  catch (err) { console.log(`Erro: ${err.message}`); }
+});
+
+// Operações de empréstimo e devolução
+const operacoes = [
+  () => biblioteca.emprestar('123'),
+  () => biblioteca.emprestar('234'),
+  () => biblioteca.devolver('234'),
+  () => biblioteca.devolver('234'),
+  () => biblioteca.emprestar('123'),
+  () => biblioteca.emprestar('456'),
+];
+
+console.log('\nQ2 - Operações:');
+operacoes.forEach(fn => {
+  try { fn(); }
+  catch (err) { console.log(`Erro: ${err.message}`); }
+});
+
+// Estado final
+console.log('\nQ2 - Estado Final da Biblioteca:');
+console.log(biblioteca);
